@@ -1,0 +1,24 @@
+import { config } from "dotenv";
+import { defineConfig } from "drizzle-kit";
+
+config({ path: ".env.local" });
+config({ path: ".env" });
+
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error(
+    "DATABASE_URL이 없습니다. .env.example을 .env.local로 복사해 주세요.",
+  );
+}
+
+export default defineConfig({
+  schema: "./src/db/schema.ts",
+  out: "./drizzle",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: databaseUrl,
+  },
+  strict: true,
+  verbose: true,
+});

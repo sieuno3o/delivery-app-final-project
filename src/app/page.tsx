@@ -1,13 +1,13 @@
 const milestones = [
   {
-    label: "지금",
-    title: "프로젝트 기반",
-    description: "Next.js, TypeScript, Tailwind와 자동 검증 환경을 준비합니다.",
+    label: "완료",
+    title: "데이터베이스",
+    description: "Docker PostgreSQL과 Drizzle로 식당·메뉴·주문 구조를 만들었습니다.",
   },
   {
     label: "다음",
-    title: "데이터베이스",
-    description: "Docker PostgreSQL과 Drizzle로 식당·메뉴·주문 구조를 만듭니다.",
+    title: "회원 인증",
+    description: "이메일 회원가입과 안전한 DB 세션 로그인을 구현합니다.",
   },
   {
     label: "목표",

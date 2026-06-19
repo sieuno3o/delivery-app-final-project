@@ -44,25 +44,26 @@
 
 ### 1. 로컬 DB와 데이터 모델
 
-- [ ] `docker-compose.yml`에 PostgreSQL 서비스를 구성한다.
-- [ ] `make up`, `make down`, `make logs`, `make db-reset` 명령을 만든다.
-- [ ] Drizzle 연결, 마이그레이션, 시드 스크립트를 구성한다.
-- [ ] 아래 테이블과 관계를 구현한다.
+- [x] `docker-compose.yml`에 PostgreSQL 서비스를 구성한다.
+- [x] `make up`, `make down`, `make logs`, `make db-reset` 명령을 만든다.
+- [x] Drizzle 연결, 마이그레이션, 시드 스크립트를 구성한다.
+- [x] 아래 테이블과 관계를 구현한다.
   - `users`: 계정과 비밀번호 해시
   - `sessions`: 로그인 세션과 만료 시각
   - `restaurants`: 식당 정보, 카테고리, 배달비, 최소 주문 금액
   - `menu_items`: 식당별 메뉴, 가격, 품절 여부
   - `orders`: 주문자, 식당, 상태, 배송 정보, 총액
   - `order_items`: 주문별 메뉴명·단가 스냅샷과 수량
-- [ ] 외래키, 필수값, 금액의 음수 방지, 수량 양수 조건을 설정한다.
-- [ ] 주문 조회에 필요한 인덱스를 추가한다.
-- [ ] 시연용 식당 6개와 식당별 메뉴 5개 이상을 시드한다.
-- [ ] DB 관계와 설계 이유를 `docs/database.md`에 기록한다.
+  - `order_status_history`: 주문 상태 변경 시각과 변경자
+- [x] 외래키, 필수값, 금액의 음수 방지, 수량 양수 조건을 설정한다.
+- [x] 주문 조회에 필요한 인덱스를 추가한다.
+- [x] 시연용 식당 6개와 식당별 메뉴 5개 이상을 시드한다.
+- [x] DB 관계와 설계 이유를 `docs/database.md`에 기록한다.
 
 완료 확인:
 
-- [ ] 빈 DB에서 마이그레이션과 시드를 한 번에 실행할 수 있다.
-- [ ] 식당과 메뉴가 실제 DB 조회 결과로 표시될 준비가 되어 있다.
+- [x] 빈 DB에서 마이그레이션과 시드를 한 번에 실행할 수 있다.
+- [x] 식당과 메뉴가 실제 DB 조회 결과로 표시될 준비가 되어 있다.
 
 권장 커밋: `feat: add database schema and seed data`
 
