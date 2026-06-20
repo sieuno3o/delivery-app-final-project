@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AuthNav } from "@/components/auth/auth-nav";
+import { CartLink } from "@/components/cart/cart-link";
 
 export function SiteHeader() {
   return (
@@ -8,7 +9,10 @@ export function SiteHeader() {
       <Link className="text-xl font-black tracking-[-0.04em]" href="/">
         동네한입
       </Link>
-      <AuthNav />
+      <div className="flex items-center gap-2">
+        <CartLink />
+        <AuthNav />
+      </div>
     </header>
   );
 }

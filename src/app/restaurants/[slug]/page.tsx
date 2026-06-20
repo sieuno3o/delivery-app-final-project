@@ -43,6 +43,13 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
   }
 
   const visual = getRestaurantVisual(restaurant.category);
+  const restaurantForCart = {
+    id: restaurant.id,
+    name: restaurant.name,
+    slug: restaurant.slug,
+    deliveryFee: restaurant.deliveryFee,
+    minimumOrderAmount: restaurant.minimumOrderAmount,
+  };
   const menuGroups = restaurant.menuItems.reduce((groups, menuItem) => {
     const categoryMenus = groups.get(menuItem.category) ?? [];
     categoryMenus.push(menuItem);
@@ -159,7 +166,11 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     {menuItems.map((menuItem) => (
-                      <MenuCard key={menuItem.id} menuItem={menuItem} />
+                      <MenuCard
+                        key={menuItem.id}
+                        menuItem={menuItem}
+                        restaurant={restaurantForCart}
+                      />
                     ))}
                   </div>
                 </section>
