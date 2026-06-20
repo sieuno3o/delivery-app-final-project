@@ -1,71 +1,79 @@
-import { AuthNav } from "@/components/auth/auth-nav";
+import Link from "next/link";
 
-const milestones = [
-  {
-    label: "완료",
-    title: "데이터베이스",
-    description: "Docker PostgreSQL과 Drizzle로 식당·메뉴·주문 구조를 만들었습니다.",
-  },
-  {
-    label: "완료",
-    title: "회원 인증",
-    description: "bcrypt 비밀번호와 HTTP-only DB 세션 로그인을 구현했습니다.",
-  },
-  {
-    label: "다음",
-    title: "식당과 메뉴",
-    description: "DB의 식당과 메뉴를 실제 화면에 연결하고 탐색 흐름을 만듭니다.",
-  },
-];
+import { SiteHeader } from "@/components/layout/site-header";
+import { RestaurantCard } from "@/components/restaurants/restaurant-card";
+import { getRestaurants } from "@/data/restaurants";
 
-export default function Home() {
+export default async function Home() {
+  const restaurants = await getRestaurants();
+
   return (
     <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 sm:px-10 lg:px-16">
-        <header className="flex items-center justify-between border-b border-black/10 pb-5">
-          <a className="text-xl font-black tracking-[-0.04em]" href="#top">
-            동네한입
-          </a>
-          <AuthNav />
-        </header>
+      <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
+        <SiteHeader />
 
-        <section
-          className="flex flex-1 flex-col justify-center py-16 sm:py-24"
-          id="top"
-        >
-          <p className="mb-5 text-sm font-bold text-[var(--accent)]">
-            DELIVERY, MADE CLEAR
-          </p>
-          <h1 className="max-w-4xl text-5xl font-black leading-[1.08] tracking-[-0.06em] sm:text-7xl">
-            우리 동네 맛집을
-            <br />한 번에, 한입에.
-          </h1>
-          <p className="mt-7 max-w-2xl text-base leading-7 text-black/60 sm:text-lg">
-            식당과 메뉴를 둘러보고 장바구니에 담아 주문한 뒤, 주문 상태와
-            지난 주문까지 확인하는 풀스택 배달 서비스입니다.
-          </p>
-
-          <div className="mt-14 grid gap-4 md:grid-cols-3">
-            {milestones.map((milestone) => (
-              <article
-                className="rounded-3xl bg-white p-6 shadow-[0_20px_50px_rgba(33,31,28,0.06)] ring-1 ring-black/5"
-                key={milestone.title}
-              >
-                <span className="text-xs font-bold text-[var(--accent)]">
-                  {milestone.label}
-                </span>
-                <h2 className="mt-3 text-xl font-extrabold tracking-[-0.03em]">
-                  {milestone.title}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-black/55">
-                  {milestone.description}
-                </p>
-              </article>
-            ))}
+        <section className="relative overflow-hidden py-16 sm:py-24" id="top">
+          <div className="absolute right-0 top-14 hidden h-64 w-64 rounded-full bg-orange-200/35 blur-3xl sm:block" />
+          <div className="relative">
+            <p className="mb-5 text-sm font-bold text-[var(--accent)]">
+              DELIVERY, MADE CLEAR
+            </p>
+            <h1 className="max-w-4xl text-5xl font-black leading-[1.08] tracking-[-0.06em] sm:text-7xl">
+              오늘은 어떤 한입이
+              <br />필요한가요?
+            </h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-black/60 sm:text-lg">
+              가까운 맛집의 메뉴를 천천히 둘러보세요. 주문할 때 보이는
+              가격과 배달 정보는 모두 데이터베이스에서 불러옵니다.
+            </p>
+            <Link
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-white transition hover:bg-black"
+              href="#restaurants"
+            >
+              식당 둘러보기
+              <span aria-hidden="true">↓</span>
+            </Link>
           </div>
         </section>
 
-        <footer className="flex flex-col gap-2 border-t border-black/10 py-5 text-xs text-black/45 sm:flex-row sm:items-center sm:justify-between">
+        <section className="pb-24" id="restaurants">
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold tracking-[0.12em] text-[var(--accent)]">
+                NEARBY RESTAURANTS
+              </p>
+              <h2 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-4xl">
+                지금 주문 가능한 맛집
+              </h2>
+            </div>
+            <p className="hidden text-sm font-semibold text-black/45 sm:block">
+              총 {restaurants.length}곳
+            </p>
+          </div>
+
+          {restaurants.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {restaurants.map((restaurant) => (
+                <RestaurantCard
+                  key={restaurant.id}
+                  restaurant={restaurant}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[2rem] bg-white px-6 py-16 text-center shadow-sm ring-1 ring-black/5">
+              <span aria-hidden="true" className="text-5xl">
+                🍽️
+              </span>
+              <h3 className="mt-5 text-xl font-black">아직 등록된 식당이 없어요</h3>
+              <p className="mt-2 text-sm text-black/50">
+                시드 데이터를 확인한 뒤 다시 시도해 주세요.
+              </p>
+            </div>
+          )}
+        </section>
+
+        <footer className="flex flex-col gap-2 border-t border-black/10 py-6 text-xs text-black/45 sm:flex-row sm:items-center sm:justify-between">
           <span>컴퓨터과학개론 · 배달앱 만들기 &amp; 배포</span>
           <span>Next.js · PostgreSQL · Vercel</span>
         </footer>
