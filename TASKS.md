@@ -200,7 +200,7 @@
 - [x] Playwright로 필수 시연 전체 흐름을 자동화한다.
 - [ ] 잘못된 입력, 중복 주문, 품절, DB 오류를 확인한다.
 - [x] `lint`, 타입 검사, 테스트, 빌드를 한 명령으로 실행할 수 있게 한다.
-- [ ] 공개 URL에서 최종 smoke test를 실행한다.
+- [x] 공개 URL에서 최종 smoke test를 실행한다.
 
 권장 커밋: `test: cover critical ordering flow`
 
