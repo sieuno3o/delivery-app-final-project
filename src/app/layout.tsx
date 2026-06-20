@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CartProvider } from "@/components/cart/cart-provider";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 
 import "./globals.css";
 
@@ -19,8 +20,17 @@ export default function RootLayout({
 }>) {
   return (
     <html data-scroll-behavior="smooth" lang="ko">
-      <body>
-        <CartProvider>{children}</CartProvider>
+      <body className="pb-24 sm:pb-0">
+        <a
+          className="fixed left-4 top-3 z-[100] -translate-y-20 rounded-full bg-[var(--ink)] px-4 py-3 text-sm font-bold text-white transition focus:translate-y-0"
+          href="#main-content"
+        >
+          본문 바로가기
+        </a>
+        <CartProvider>
+          {children}
+          <MobileBottomNav />
+        </CartProvider>
       </body>
     </html>
   );

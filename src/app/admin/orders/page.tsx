@@ -19,7 +19,7 @@ export default async function AdminOrdersPage() {
   const orders = await getOrdersForAdmin();
 
   return (
-    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]">
+    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]" id="main-content">
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
         <SiteHeader />
         <section className="py-12 sm:py-16">

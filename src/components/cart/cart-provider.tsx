@@ -178,7 +178,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       {toast ? (
         <div
           aria-live="polite"
-          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-white shadow-2xl"
+          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-white shadow-2xl sm:bottom-6"
           role="status"
         >
           {toast}

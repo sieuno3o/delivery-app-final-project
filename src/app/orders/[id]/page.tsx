@@ -46,7 +46,7 @@ export default async function OrderPage({
   }).format(order.createdAt);
 
   return (
-    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]">
+    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]" id="main-content">
       {justPlaced ? <ClearCartAfterOrder orderId={order.id} /> : null}
       <div className="mx-auto max-w-5xl px-6 sm:px-10 lg:px-16">
         <SiteHeader />

@@ -17,7 +17,7 @@ export function AuthShell({
   footer,
 }: AuthShellProps) {
   return (
-    <main className="min-h-screen bg-[var(--surface)] px-5 py-8 text-[var(--ink)] sm:px-8 sm:py-12">
+    <main className="min-h-screen bg-[var(--surface)] px-5 py-8 text-[var(--ink)] sm:px-8 sm:py-12" id="main-content">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col">
         <header>
           <Link className="text-xl font-black tracking-[-0.04em]" href="/">

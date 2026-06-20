@@ -19,6 +19,7 @@ export function RestaurantCard({
 
   return (
     <Link
+      aria-label={`${restaurant.name} 식당 보기`}
       className="group block overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_50px_rgba(33,31,28,0.07)] ring-1 ring-black/5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(33,31,28,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
       href={`/restaurants/${restaurant.slug}`}
     >

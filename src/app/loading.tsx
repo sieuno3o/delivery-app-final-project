@@ -1,6 +1,7 @@
 export default function Loading() {
   return (
     <main
+      id="main-content"
       aria-busy="true"
       aria-label="식당 목록을 불러오는 중"
       className="min-h-screen bg-[var(--surface)] px-6 text-[var(--ink)] sm:px-10"

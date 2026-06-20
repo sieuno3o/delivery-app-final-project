@@ -58,7 +58,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
   }, new Map<string, typeof restaurant.menuItems>());
 
   return (
-    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]">
+    <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]" id="main-content">
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
         <SiteHeader />
 

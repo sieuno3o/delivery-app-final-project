@@ -9,7 +9,7 @@ export function SiteHeader() {
       <Link className="text-xl font-black tracking-[-0.04em]" href="/">
         동네한입
       </Link>
-      <div className="flex items-center gap-2">
+      <div className="hidden items-center gap-2 sm:flex">
         <CartLink />
         <AuthNav />
       </div>

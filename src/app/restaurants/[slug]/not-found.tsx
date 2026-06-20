@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function RestaurantNotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-6 text-center text-[var(--ink)]">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-6 text-center text-[var(--ink)]" id="main-content">
       <div className="max-w-md rounded-[2rem] bg-white p-9 shadow-[0_24px_80px_rgba(33,31,28,0.08)] ring-1 ring-black/5">
         <span aria-hidden="true" className="text-5xl">
           🔎
