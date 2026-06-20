@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { RestaurantListItem } from "@/data/restaurants";
+import { formatWon } from "@/lib/currency";
 import {
   formatDeliveryFee,
   formatDeliveryTime,
@@ -63,6 +64,10 @@ export function RestaurantCard({
             </span>
             <span aria-hidden="true">·</span>
             <span>{formatDeliveryFee(restaurant.deliveryFee)}</span>
+            <span aria-hidden="true">·</span>
+            <span>
+              최소 주문 {formatWon(restaurant.minimumOrderAmount)}
+            </span>
             <span aria-hidden="true">·</span>
             <span>리뷰 {formatReviewCount(restaurant.reviewCount)}</span>
           </div>

@@ -2,10 +2,29 @@ import Link from "next/link";
 
 import { SiteHeader } from "@/components/layout/site-header";
 import { RestaurantCard } from "@/components/restaurants/restaurant-card";
-import { getRestaurants } from "@/data/restaurants";
+import { RestaurantFilterForm } from "@/components/restaurants/restaurant-filters";
+import {
+  getRestaurantCategories,
+  getRestaurants,
+} from "@/data/restaurants";
+import {
+  hasActiveRestaurantFilters,
+  parseRestaurantFilters,
+} from "@/lib/restaurant-filters";
 
-export default async function Home() {
-  const restaurants = await getRestaurants();
+type HomeProps = {
+  searchParams: Promise<
+    Record<string, string | string[] | undefined>
+  >;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const filters = parseRestaurantFilters(await searchParams);
+  const [restaurants, categories] = await Promise.all([
+    getRestaurants(filters),
+    getRestaurantCategories(),
+  ]);
+  const hasFilters = hasActiveRestaurantFilters(filters);
 
   return (
     <main className="min-h-screen bg-[var(--surface)] text-[var(--ink)]">
@@ -47,9 +66,14 @@ export default async function Home() {
               </h2>
             </div>
             <p className="hidden text-sm font-semibold text-black/45 sm:block">
-              총 {restaurants.length}곳
+              검색 결과 {restaurants.length}곳
             </p>
           </div>
+
+          <RestaurantFilterForm
+            categories={categories}
+            filters={filters}
+          />
 
           {restaurants.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -65,10 +89,24 @@ export default async function Home() {
               <span aria-hidden="true" className="text-5xl">
                 🍽️
               </span>
-              <h3 className="mt-5 text-xl font-black">아직 등록된 식당이 없어요</h3>
+              <h3 className="mt-5 text-xl font-black">
+                {hasFilters
+                  ? "조건에 맞는 식당이 없어요"
+                  : "아직 등록된 식당이 없어요"}
+              </h3>
               <p className="mt-2 text-sm text-black/50">
-                시드 데이터를 확인한 뒤 다시 시도해 주세요.
+                {hasFilters
+                  ? "검색어나 금액 조건을 조금 넓혀보세요."
+                  : "시드 데이터를 확인한 뒤 다시 시도해 주세요."}
               </p>
+              {hasFilters ? (
+                <Link
+                  className="mt-6 inline-flex rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-white"
+                  href="/#restaurants"
+                >
+                  전체 식당 보기
+                </Link>
+              ) : null}
             </div>
           )}
         </section>
