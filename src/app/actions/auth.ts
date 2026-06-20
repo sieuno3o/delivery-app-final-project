@@ -22,6 +22,7 @@ import {
   loginSchema,
   signUpSchema,
 } from "@/lib/auth/validation";
+import { resolveUserRole } from "@/lib/auth/roles";
 
 function isUniqueViolation(error: unknown) {
   return (
@@ -60,6 +61,7 @@ export async function signUpAction(
           name: result.data.name,
           email: result.data.email,
           passwordHash,
+          role: resolveUserRole(result.data.email),
         })
         .returning({ id: users.id });
 
@@ -110,6 +112,7 @@ export async function loginAction(
     .select({
       id: users.id,
       passwordHash: users.passwordHash,
+      role: users.role,
     })
     .from(users)
     .where(eq(users.email, result.data.email))
@@ -127,6 +130,16 @@ export async function loginAction(
   }
 
   try {
+    if (
+      user.role !== "admin" &&
+      resolveUserRole(result.data.email) === "admin"
+    ) {
+      await db
+        .update(users)
+        .set({ role: "admin", updatedAt: new Date() })
+        .where(eq(users.id, user.id));
+    }
+
     await createSession(user.id);
   } catch (error) {
     console.error("로그인 세션 생성 실패", error);

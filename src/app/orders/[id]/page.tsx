@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/layout/site-header";
 import { ClearCartAfterOrder } from "@/components/orders/clear-cart-after-order";
+import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
 import { getOrderByIdForUser } from "@/data/orders";
 import { requireUser } from "@/lib/auth/session";
 import { formatWon } from "@/lib/currency";
@@ -82,7 +83,14 @@ export default async function OrderPage({
             </div>
           )}
 
-          <div className="mt-7 grid gap-6 lg:grid-cols-[1fr_20rem] lg:items-start">
+          <div className="mt-7">
+            <OrderStatusTimeline
+              currentStatus={order.status}
+              history={order.statusHistory}
+            />
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem] lg:items-start">
             <section className="rounded-[2rem] bg-white p-6 shadow-[0_20px_60px_rgba(33,31,28,0.06)] ring-1 ring-black/5 sm:p-8">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-black/8 pb-6">
                 <div>

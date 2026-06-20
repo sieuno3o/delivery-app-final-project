@@ -1,10 +1,4 @@
-export const orderStatusLabels = {
-  received: "주문 접수",
-  preparing: "조리 중",
-  delivering: "배달 중",
-  completed: "배달 완료",
-  cancelled: "주문 취소",
-} as const;
+export { orderStatusLabels } from "./order-status";
 
 export function summarizeOrderItems(
   items: { menuName: string; quantity: number }[],

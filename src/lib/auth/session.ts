@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 
 import { and, eq, gt } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { sessions, users } from "@/db/schema";
@@ -112,6 +112,20 @@ export async function requireUser(redirectPath = "/orders") {
 
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(redirectPath)}`);
+  }
+
+  return user;
+}
+
+export async function requireAdmin(redirectPath = "/admin/orders") {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect(`/login?next=${encodeURIComponent(redirectPath)}`);
+  }
+
+  if (user.role !== "admin") {
+    notFound();
   }
 
   return user;

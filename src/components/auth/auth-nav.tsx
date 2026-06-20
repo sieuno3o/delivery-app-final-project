@@ -36,6 +36,14 @@ export async function AuthNav() {
       >
         주문내역
       </Link>
+      {user.role === "admin" ? (
+        <Link
+          className="rounded-full bg-orange-50 px-3 py-2 text-sm font-bold text-[var(--accent)] transition hover:bg-orange-100"
+          href="/admin/orders"
+        >
+          관리자
+        </Link>
+      ) : null}
       <form action={logoutAction}>
         <button
           className="rounded-full bg-white px-3 py-2 text-sm font-bold text-black/60 shadow-sm ring-1 ring-black/5 transition hover:text-black"
