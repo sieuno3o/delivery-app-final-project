@@ -16,7 +16,6 @@ export function CartView() {
     updateQuantity,
     removeItem,
     clearCart,
-    notify,
   } = useCart();
 
   if (!isHydrated) {
@@ -186,18 +185,22 @@ export function CartView() {
           </p>
         </div>
 
-        <button
-          className="mt-5 w-full rounded-2xl bg-[var(--ink)] px-4 py-3.5 text-sm font-bold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:bg-black/15 disabled:text-black/40"
-          disabled={minimumOrderRemaining > 0}
-          onClick={() =>
-            notify("장바구니가 준비됐어요. 다음 단계에서 주문서를 연결합니다.")
-          }
-          type="button"
-        >
-          {minimumOrderRemaining > 0
-            ? `${formatWon(minimumOrderRemaining)} 더 담기`
-            : "주문하기"}
-        </button>
+        {minimumOrderRemaining > 0 ? (
+          <button
+            className="mt-5 w-full cursor-not-allowed rounded-2xl bg-black/15 px-4 py-3.5 text-sm font-bold text-black/40"
+            disabled
+            type="button"
+          >
+            {formatWon(minimumOrderRemaining)} 더 담기
+          </button>
+        ) : (
+          <Link
+            className="mt-5 flex w-full justify-center rounded-2xl bg-[var(--ink)] px-4 py-3.5 text-sm font-bold text-white transition hover:bg-black"
+            href="/checkout"
+          >
+            주문하기
+          </Link>
+        )}
       </aside>
     </div>
   );

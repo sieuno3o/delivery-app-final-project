@@ -146,6 +146,7 @@ export const orders = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     orderNumber: varchar("order_number", { length: 24 }).notNull(),
+    idempotencyKey: uuid("idempotency_key").notNull(),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -168,6 +169,7 @@ export const orders = pgTable(
   },
   (table) => [
     uniqueIndex("orders_order_number_unique").on(table.orderNumber),
+    uniqueIndex("orders_idempotency_key_unique").on(table.idempotencyKey),
     index("orders_user_created_at_idx").on(table.userId, table.createdAt),
     index("orders_restaurant_created_at_idx").on(
       table.restaurantId,
