@@ -35,6 +35,7 @@ export default async function OrderPage({
 
   const justPlaced = query.placed === "1";
   const createdAt = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
     year: "numeric",
     month: "long",
     day: "numeric",

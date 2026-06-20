@@ -53,6 +53,7 @@ export default async function OrdersPage() {
                       <div>
                         <p className="text-xs font-bold text-black/40">
                           {new Intl.DateTimeFormat("ko-KR", {
+                            timeZone: "Asia/Seoul",
                             year: "numeric",
                             month: "numeric",
                             day: "numeric",

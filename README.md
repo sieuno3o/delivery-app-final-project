@@ -4,7 +4,7 @@
 
 컴퓨터과학개론 기말 프로젝트로 제작하며, 로컬 개발 환경부터 PostgreSQL 데이터베이스, 인증, 테스트, 공개 웹 배포까지 하나의 서비스로 완성하는 것이 목표입니다.
 
-> 현재 상태: 회원가입부터 주문 생성·주문내역 조회까지 필수 주문 흐름 완료
+> 현재 상태: 회원가입부터 주문 생성·주문내역 조회까지 필수 주문 흐름과 첫 운영 배포 완료
 
 ## 프로젝트 목표
 
@@ -146,8 +146,8 @@ pnpm verify
 
 - 운영 데이터베이스: Neon PostgreSQL
 - 웹 애플리케이션: Vercel
-- 운영 URL: 구현 후 추가
-- GitHub 저장소: 연결 후 추가
+- 운영 URL: [https://dongne-hanip-kohl.vercel.app](https://dongne-hanip-kohl.vercel.app)
+- GitHub 저장소: [sieuno3o/delivery-app-final-project](https://github.com/sieuno3o/delivery-app-final-project)
 
 Vercel에는 `DATABASE_URL`, `ADMIN_EMAILS` 등 운영용 환경 변수를 별도로 등록합니다. 운영 DB에는 마이그레이션과 시드 데이터를 적용한 뒤 시크릿 브라우저와 모바일 네트워크에서 전체 흐름을 점검합니다.
 
