@@ -4,7 +4,7 @@
 
 컴퓨터과학개론 기말 프로젝트로 제작하며, 로컬 개발 환경부터 PostgreSQL 데이터베이스, 인증, 테스트, 공개 웹 배포까지 하나의 서비스로 완성하는 것이 목표입니다.
 
-> 현재 상태: Docker PostgreSQL, DB 스키마와 시드 완료, 회원 인증 구현 예정
+> 현재 상태: DB와 회원 인증 완료, 식당·메뉴 화면 구현 예정
 
 ## 프로젝트 목표
 
@@ -19,7 +19,7 @@
 
 ### 필수 기능
 
-- [ ] 회원가입, 로그인, 로그아웃
+- [x] 회원가입, 로그인, 로그아웃
 - [ ] 식당 및 메뉴 목록 조회
 - [ ] 메뉴 장바구니 담기와 수량 변경
 - [ ] 주문 생성 및 DB 저장
@@ -100,7 +100,6 @@ cp .env.example .env.local
 
 ```dotenv
 DATABASE_URL=postgresql://delivery:delivery@localhost:5433/delivery
-SESSION_SECRET=replace-with-a-long-random-value
 ADMIN_EMAILS=admin@example.com
 ```
 
@@ -150,7 +149,7 @@ pnpm verify
 - 운영 URL: 구현 후 추가
 - GitHub 저장소: 연결 후 추가
 
-Vercel에는 `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAILS` 등 운영용 환경 변수를 별도로 등록합니다. 운영 DB에는 마이그레이션과 시드 데이터를 적용한 뒤 시크릿 브라우저와 모바일 네트워크에서 전체 흐름을 점검합니다.
+Vercel에는 `DATABASE_URL`, `ADMIN_EMAILS` 등 운영용 환경 변수를 별도로 등록합니다. 운영 DB에는 마이그레이션과 시드 데이터를 적용한 뒤 시크릿 브라우저와 모바일 네트워크에서 전체 흐름을 점검합니다.
 
 ## 전체 시연 흐름
 

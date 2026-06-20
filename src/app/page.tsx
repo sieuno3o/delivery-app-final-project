@@ -1,3 +1,5 @@
+import { AuthNav } from "@/components/auth/auth-nav";
+
 const milestones = [
   {
     label: "완료",
@@ -5,14 +7,14 @@ const milestones = [
     description: "Docker PostgreSQL과 Drizzle로 식당·메뉴·주문 구조를 만들었습니다.",
   },
   {
-    label: "다음",
+    label: "완료",
     title: "회원 인증",
-    description: "이메일 회원가입과 안전한 DB 세션 로그인을 구현합니다.",
+    description: "bcrypt 비밀번호와 HTTP-only DB 세션 로그인을 구현했습니다.",
   },
   {
-    label: "목표",
-    title: "한 바퀴 시연",
-    description: "회원가입부터 주문내역까지 공개 URL에서 끊김 없이 완성합니다.",
+    label: "다음",
+    title: "식당과 메뉴",
+    description: "DB의 식당과 메뉴를 실제 화면에 연결하고 탐색 흐름을 만듭니다.",
   },
 ];
 
@@ -24,9 +26,7 @@ export default function Home() {
           <a className="text-xl font-black tracking-[-0.04em]" href="#top">
             동네한입
           </a>
-          <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black/60 shadow-sm ring-1 ring-black/5">
-            기말 프로젝트
-          </span>
+          <AuthNav />
         </header>
 
         <section
