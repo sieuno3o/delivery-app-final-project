@@ -1,6 +1,10 @@
 # 데이터베이스 구조와 설계 이유
 
-## 관계 구조
+## 발표용 ERD — 핵심 컬럼과 PK/FK
+
+- `PK`: 각 행을 유일하게 구분하는 기본키
+- `FK`: 다른 테이블의 PK를 참조하는 외래키
+- `UK`: 중복 저장을 막는 고유키
 
 ```mermaid
 erDiagram
@@ -12,19 +16,94 @@ erDiagram
     ORDERS ||--|{ ORDER_ITEMS : contains
     ORDERS ||--o{ ORDER_STATUS_HISTORY : records
     MENU_ITEMS o|--o{ ORDER_ITEMS : referenced_by
+
+    USERS {
+        uuid id PK
+        varchar email UK
+        varchar name
+        text password_hash
+        user_role role
+    }
+
+    SESSIONS {
+        uuid id PK
+        uuid user_id FK
+        varchar token_hash UK
+        timestamptz expires_at
+    }
+
+    RESTAURANTS {
+        uuid id PK
+        varchar slug UK
+        varchar name
+        varchar category
+        integer delivery_fee
+        integer minimum_order_amount
+    }
+
+    MENU_ITEMS {
+        uuid id PK
+        uuid restaurant_id FK
+        varchar name
+        integer price
+        boolean is_sold_out
+    }
+
+    ORDERS {
+        uuid id PK
+        uuid user_id FK
+        uuid restaurant_id FK
+        uuid idempotency_key UK
+        order_status status
+        integer subtotal
+        integer delivery_fee
+        integer total_amount
+    }
+
+    ORDER_ITEMS {
+        uuid id PK
+        uuid order_id FK
+        uuid menu_item_id FK
+        varchar menu_name
+        integer unit_price
+        integer quantity
+    }
+
+    ORDER_STATUS_HISTORY {
+        uuid id PK
+        uuid order_id FK
+        uuid changed_by_user_id FK
+        order_status status
+        varchar note
+        timestamptz created_at
+    }
 ```
 
-## 테이블별 역할
+## 테이블별 키와 역할
 
-| 테이블 | 한 줄 설명 |
-| --- | --- |
-| `users` | 로그인 계정, 비밀번호 해시, 고객/관리자 역할을 저장한다. |
-| `sessions` | 로그인 상태를 유지하기 위한 세션 토큰 해시와 만료 시각을 저장한다. |
-| `restaurants` | 식당의 카테고리, 배달비, 최소 주문 금액, 예상 시간을 저장한다. |
-| `menu_items` | 각 식당이 판매하는 메뉴와 현재 가격, 품절 여부를 저장한다. |
-| `orders` | 누가 어느 식당에 주문했는지와 배송지, 합계, 현재 상태, 중복 방지 키를 저장한다. |
-| `order_items` | 한 주문에 포함된 여러 메뉴의 이름·단가 스냅샷과 수량을 저장한다. |
-| `order_status_history` | 주문 상태가 언제 누구에 의해 바뀌었는지 시간순으로 저장한다. |
+| 테이블 | PK | 주요 FK | 한 줄 역할 |
+| --- | --- | --- | --- |
+| `users` | `id` | 없음 | 로그인 계정, 비밀번호 해시, 고객/관리자 역할을 저장한다. |
+| `sessions` | `id` | `user_id → users.id` | 사용자별 로그인 세션의 토큰 해시와 만료 시각을 저장한다. |
+| `restaurants` | `id` | 없음 | 식당의 카테고리, 배달비, 최소 주문 금액, 예상 시간을 저장한다. |
+| `menu_items` | `id` | `restaurant_id → restaurants.id` | 각 식당이 판매하는 메뉴와 현재 가격, 품절 여부를 저장한다. |
+| `orders` | `id` | `user_id → users.id`<br>`restaurant_id → restaurants.id` | 주문자·식당·배송지·합계·현재 상태·중복 방지 키를 저장한다. |
+| `order_items` | `id` | `order_id → orders.id`<br>`menu_item_id → menu_items.id` | 주문에 포함된 메뉴의 이름·단가 스냅샷과 수량을 저장한다. |
+| `order_status_history` | `id` | `order_id → orders.id`<br>`changed_by_user_id → users.id` | 상태가 언제 누구에 의해 변경됐는지 시간순으로 저장한다. |
+
+## 관계 한눈에 보기
+
+| 관계 | 형태 | 이 관계가 필요한 이유 |
+| --- | --- | --- |
+| `users.id → sessions.user_id` | 사용자 1 : 세션 N | 한 사용자가 여러 기기에서 각각 로그인할 수 있다. |
+| `users.id → orders.user_id` | 사용자 1 : 주문 N | 내 주문 내역을 현재 로그인 사용자 기준으로 조회한다. |
+| `restaurants.id → menu_items.restaurant_id` | 식당 1 : 메뉴 N | 한 식당이 여러 메뉴를 판매한다. |
+| `restaurants.id → orders.restaurant_id` | 식당 1 : 주문 N | 주문이 어느 식당에 들어왔는지 구분한다. |
+| `orders.id → order_items.order_id` | 주문 1 : 주문항목 N | 한 주문에 여러 메뉴와 수량을 담는다. |
+| `orders.id → order_status_history.order_id` | 주문 1 : 상태이력 N | 현재 상태뿐 아니라 접수부터 완료까지 변경 과정을 보존한다. |
+| `menu_items.id → order_items.menu_item_id` | 메뉴 1 : 주문항목 N | 현재 메뉴와 연결하되, 메뉴 삭제 후에도 주문 스냅샷은 남긴다. |
+
+> 발표에서는 `users → orders → order_items`를 먼저 따라가며 “누가 주문했고, 한 주문에 어떤 메뉴가 들어갔는지”를 설명한 뒤, `restaurants → menu_items`와 `orders → order_status_history`를 설명하면 관계가 가장 쉽게 보인다.
 
 ## 왜 이렇게 나눴는가
 
