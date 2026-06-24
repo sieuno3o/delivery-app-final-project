@@ -101,7 +101,7 @@ erDiagram
 | `restaurants.id → orders.restaurant_id` | 식당 1 : 주문 N | 주문이 어느 식당에 들어왔는지 구분한다. |
 | `orders.id → order_items.order_id` | 주문 1 : 주문항목 N | 한 주문에 여러 메뉴와 수량을 담는다. |
 | `orders.id → order_status_history.order_id` | 주문 1 : 상태이력 N | 현재 상태뿐 아니라 접수부터 완료까지 변경 과정을 보존한다. |
-| `menu_items.id → order_items.menu_item_id` | 메뉴 1 : 주문항목 N | 현재 메뉴와 연결하되, 메뉴 삭제 후에도 주문 스냅샷은 남긴다. |
+| `menu_items.id → order_items.menu_item_id` | 메뉴 1 : 주문항목 N | 현재 메뉴와 연결하며, 삭제 시 FK만 `NULL`이 되고 주문 스냅샷은 남는다. |
 
 > 발표에서는 `users → orders → order_items`를 먼저 따라가며 “누가 주문했고, 한 주문에 어떤 메뉴가 들어갔는지”를 설명한 뒤, `restaurants → menu_items`와 `orders → order_status_history`를 설명하면 관계가 가장 쉽게 보인다.
 
@@ -111,7 +111,11 @@ erDiagram
 
 주문 한 건에는 메뉴가 여러 개 들어간다. 배송지와 총액처럼 주문 전체에 한 번만 필요한 값은 `orders`에 두고, 메뉴마다 반복되는 이름·단가·수량은 `order_items`에 둔다. 이 구조는 주문에 메뉴가 몇 개 들어가더라도 중복 없이 표현할 수 있다.
 
-`order_items`에는 `menu_item_id`뿐 아니라 주문 당시의 `menu_name`과 `unit_price`도 저장한다. 식당이 나중에 메뉴 이름이나 가격을 바꾸거나 메뉴를 삭제해도 이미 결제한 과거 주문 기록이 바뀌면 안 되기 때문이다. 메뉴가 삭제되면 외래키만 `NULL`이 되고 스냅샷은 남는다.
+`order_items`에는 `menu_item_id`뿐 아니라 주문 당시의 `menu_name`과 `unit_price`도 저장한다. 메뉴 이름이나 가격이 나중에 바뀌어도 주문 당시 결제 기록이 변하지 않게 하기 위해서다. 운영 중에는 실제 삭제보다 `is_sold_out`으로 품절 처리하고, 메뉴가 삭제되더라도 `ON DELETE SET NULL`에 따라 `menu_item_id` 연결만 `NULL`이 되며 스냅샷은 남는다.
+
+### 장바구니와 주문
+
+장바구니는 주문 확정 전의 임시 상태이므로 `cart`나 `cart_items` 테이블에 영구 저장하지 않고 브라우저 `localStorage`의 클라이언트 상태로 관리한다. 사용자가 주문하기를 누르면 서버가 식당·메뉴·현재 가격·품절 여부를 다시 검증한 뒤 `orders`, `order_items`, `order_status_history`에 영구 저장한다.
 
 ### 현재 상태와 상태 이력
 
@@ -132,7 +136,7 @@ erDiagram
 
 트랜잭션을 사용하는 이유는 주문만 있고 메뉴가 없거나, 메뉴 일부만 저장된 반쪽짜리 주문을 방지하기 위해서다.
 
-클라이언트가 주문서를 열 때 UUID 형식의 요청 키를 하나 만들고 `orders.idempotency_key`에 저장한다. 이 열에는 고유 제약이 있으므로 네트워크 지연 중 주문 버튼을 여러 번 눌러 같은 요청이 반복되어도 최초 주문 한 건만 남는다. 서버는 이미 처리한 키를 받으면 저장된 주문 상세로 이동시킨다.
+`orders.id`는 주문 자체를 식별하고, 이와 별도로 주문서를 열 때 생성한 UUID 형식의 요청 키를 `orders.idempotency_key`에 저장한다. 이 열의 고유 제약과 서버의 기존 주문 조회를 함께 사용하므로 같은 키의 요청이 재전송되면 새 주문을 만들지 않고 기존 주문 상세로 이동한다. 즉 서로 다른 주문까지 막는 것이 아니라 동일한 제출 요청의 중복 저장을 방어한다.
 
 ## 무결성 규칙
 

@@ -535,7 +535,7 @@ def make_document():
 
     metadata = document.add_paragraph(style="Subtitle")
     metadata.paragraph_format.space_after = Pt(2)
-    run = metadata.add_run("작성자 김시은  ·  작성일 2026.06.24  ·  Next.js / PostgreSQL / Docker / Vercel")
+    run = metadata.add_run("작성자 김시은  ·  작성일 2026.06.25  ·  Next.js / PostgreSQL / Docker / Vercel")
     set_run_font(run, 8.2, MUTED)
 
     links = document.add_paragraph()
@@ -598,7 +598,7 @@ def make_document():
     add_label_detail(
         paragraph,
         "주문 ↔ 주문상세",
-        "한 주문에 여러 메뉴가 들어가므로 공통값은 orders, 반복값은 order_items로 분리했다. 메뉴명·단가 스냅샷을 남겨 메뉴 수정·삭제 후에도 과거 결제 기록을 보존한다.",
+        "공통값은 orders, 반복값은 order_items로 분리했다. 메뉴명·단가 스냅샷으로 이후 이름·가격이 바뀌어도 결제 기록을 보존한다. 운영은 is_sold_out으로 품절 처리하고, 삭제 시 ON DELETE SET NULL을 적용한다.",
     )
     paragraph = document.add_paragraph()
     add_label_detail(
@@ -612,6 +612,12 @@ def make_document():
         "사용자 ↔ 세션",
         "한 사용자의 여러 기기 로그인을 허용하고 세션별 만료를 관리한다. DB에는 탈취 위험을 줄이기 위해 토큰 원문 대신 SHA-256 해시만 저장한다.",
     )
+    paragraph = document.add_paragraph()
+    add_label_detail(
+        paragraph,
+        "장바구니 ↔ 주문",
+        "주문 전 임시 상태는 localStorage에서 관리한다. 주문하기 시 서버가 메뉴·가격·품절을 다시 검증한 뒤 orders·order_items·상태 이력에 영구 저장한다.",
+    )
 
     document.add_heading("주문 저장 순서·일관성·권한", level=2)
     steps = [
@@ -619,7 +625,7 @@ def make_document():
         "식당·메뉴를 DB에서 다시 읽어 현재 가격, 품절, 최소 주문 금액을 검증한다.",
         "클라이언트 합계를 신뢰하지 않고 상품 합계·배달비·최종 금액을 서버에서 재계산한다.",
         "한 트랜잭션에서 orders 1행, order_items 여러 행, 최초 상태 이력을 저장한다.",
-        "모두 성공하면 커밋하고 하나라도 실패하면 롤백한다. UUID 고유키로 중복 주문을 막고, 조회에는 현재 user_id를 함께 사용한다.",
+        "모두 성공하면 커밋하고 실패하면 롤백한다. 별도 idempotency_key UNIQUE로 동일 제출 요청의 재저장을 막고, 조회에는 현재 user_id를 함께 사용한다.",
     ]
     for text in steps:
         paragraph = document.add_paragraph()
@@ -628,10 +634,15 @@ def make_document():
         run = paragraph.add_run(text)
         set_run_font(run, 8.1, INK)
 
-    add_callout(
-        document,
-        "환경 분리  |  로컬은 Docker Compose의 PostgreSQL 16(호스트 5433), 운영은 Neon PostgreSQL을 사용한다. 두 환경에 같은 Drizzle 마이그레이션을 적용해 스키마 차이로 인한 배포 오류를 줄였다.",
+    paragraph = document.add_paragraph()
+    paragraph.paragraph_format.space_before = Pt(1)
+    paragraph.paragraph_format.space_after = Pt(0)
+    label = paragraph.add_run("환경 분리  ")
+    set_run_font(label, 7.3, ACCENT, bold=True)
+    detail = paragraph.add_run(
+        "로컬은 Docker PostgreSQL 16(5433), 운영은 Neon을 사용하고 같은 Drizzle 마이그레이션으로 스키마를 맞춘다."
     )
+    set_run_font(detail, 7.3, MUTED)
 
     kicker = document.add_paragraph()
     kicker.paragraph_format.page_break_before = True
@@ -690,9 +701,16 @@ def make_document():
     )
 
     document.add_heading("4. 검증 결과", level=1)
+    paragraph = document.add_paragraph()
+    paragraph.paragraph_format.space_after = Pt(3)
+    add_label_detail(
+        paragraph,
+        "완성 범위",
+        "필수 기능 5개를 모두 구현했고, 가산 요소로 검색·복합 필터·품절·상태 타임라인·관리자 상태 변경·모바일 UI를 추가했다.",
+    )
     verification = [
-        ("필수 기능", "공개 URL: 회원가입 · 로그인 · 로그아웃 · 식당/메뉴 · 장바구니 · 주문 저장 · 내 주문내역", "7 / 7"),
-        ("추가 기능", "검색·복합 필터 · 품절 · 상태 타임라인 · 관리자 변경 · 모바일 UI", "구현"),
+        ("필수 기능 5개", "인증(회원가입·로그인·로그아웃) · 식당/메뉴 · 장바구니 · 주문 저장 · 내 주문내역", "5 / 5"),
+        ("가산 요소", "검색·복합 필터 · 품절 · 상태 타임라인 · 관리자 변경 · 모바일 UI", "구현"),
         ("6/24 재검증", "ESLint · TypeScript · Vitest 28개 · Next.js 프로덕션 빌드", "통과"),
         ("Chrome E2E", "가입 → 주문 → 관리자 변경 → 고객 확인, 필터, 360px", "3 / 3"),
         ("로컬 DB", "Docker PostgreSQL · 식당 6개/메뉴 30개 · 동일 마이그레이션", "통과"),
